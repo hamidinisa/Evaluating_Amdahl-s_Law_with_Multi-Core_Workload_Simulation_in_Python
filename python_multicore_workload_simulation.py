@@ -1,45 +1,42 @@
 import matplotlib.pyplot as plt  # For visualization
 
-def simulate_amdahl(total_workload_time, parallelizable_fraction, num_cores):
+def simulate_a(total_workloadtime, parallelizable_fraction, number_cores):
     """
-    Simulates execution time and speedup on a multicore system according to Amdahl's Law.
-
-    Args:
-        total_workload_time (float): Total execution time on a single core.
-        parallelizable_fraction (float): Fraction of the workload that can be parallelized (between 0.0 and 1.0).
-        num_cores (int): Number of cores used (N >= 1).
-
-    Returns:
-        tuple: (multi_core_time, speedup)
-               multi_core_time: Computed execution time on multiple cores.
-               speedup: Computed speedup compared to single-core execution.
+  This function calculates how much faster a task will run on multiple computer cores based on Amdahl's Law.  
+  It takes three things as input:
+  total_workload_time: How long the task takes on one core.
+  parallelizable_fraction: What part of the task can be split up and done at the same time on different cores (a number between 0 and 1).
+  num_cores: How many cores are being used.
+  It gives back two things:
+  multi_core_time: How long the task will take using multiple cores. 
+  speedup: How much faster it is compared to using just one core.
     """
     if not (0.0 <= parallelizable_fraction <= 1.0):
         raise ValueError("The parallelizable fraction must be between 0.0 and 1.0.")
-    if num_cores < 1:
+    if number_cores < 1:
         raise ValueError("The number of cores must be at least 1.")
-    if total_workload_time <= 0:
+    if total_workloadtime <= 0:
         raise ValueError("Total workload time must be positive.")
 
     serial_fraction = 1.0 - parallelizable_fraction  # S = 1 - P
 
     # Calculate the execution times of serial and parallel parts
-    serial_time = total_workload_time * serial_fraction
-    parallelizable_time = total_workload_time * parallelizable_fraction
+    serial_time = total_workloadtime * serial_fraction
+    parallelizable_time = total_workloadtime * parallelizable_fraction
 
     # Calculate the total execution time on multiple cores
     # The serial part remains unchanged; the parallel part is divided by N
-    if num_cores == 1:
-        multi_core_time = total_workload_time
+    if number_cores == 1:
+        multicore_time = total_workloadtime
     else:
-        multi_core_time = serial_time + (parallelizable_time / num_cores)
+        multicore_time = serial_time + (parallelizable_time / number_cores)
 
     # Calculate the speedup
-    speedup = total_workload_time / multi_core_time
+    speedup = total_workloadtime / multicore_time
 
-    return multi_core_time, speedup
+    return multicore_time, speedup
 
-# --- Run Simulation and Visualization ---
+# Run Simulation and Visualization
 
 # Set parameters
 total_time = 100.0  # Example total workload time on a single core
@@ -52,18 +49,18 @@ results = {}  # Dictionary to store the results
 for p_frac in parallel_fractions:
     speedups = []
     for n_cores in core_counts:
-        _, speedup = simulate_amdahl(total_time, p_frac, n_cores)
+        _, speedup = simulate_a(total_time, p_frac, n_cores)
         speedups.append(speedup)
     results[f'P = {p_frac:.2f}'] = speedups  # Label results with P value
 
 # Visualize the results using Matplotlib
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(12, 6))
 for label, speedup_list in results.items():
     # Add theoretical speedup limit line (1/S)
     p = float(label.split('=')[1])
     s = 1.0 - p
-    theoretical_limit = 1 / s if s > 0 else float('inf')  # If S = 0, limit is infinite
-    plt.plot(core_counts, speedup_list, marker='.', linestyle='-', label=f'{label} (Limit: {theoretical_limit:.2f})')
+    theoreticalimit = 1 / s if s > 0 else float('inf')  # If S = 0, limit is infinite
+    plt.plot(core_counts, speedup_list, marker='.', linestyle='-', label=f'{label} (Limit: {theoreticalimit:.2f})')
 
 plt.title("Amdahl's Law Simulation: Speedup vs Number of Cores")
 plt.xlabel("Number of Cores (N)")
