@@ -39,7 +39,7 @@ def simulate_a(total_workloadtime, parallelizable_fraction, number_cores):
 # Run Simulation and Visualization
 
 # Set parameters
-total_time = 100.0  # Example total workload time on a single core
+total_time = 101.0  # Example total workload time on a single core
 parallel_fractions = [0.50, 0.75, 0.90, 0.95, 0.99]  # Different P values (parallel fractions)
 core_counts = range(1, 65)  # Core counts to test (from 1 to 64)
 
